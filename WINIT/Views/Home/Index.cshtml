@@ -1,0 +1,231 @@
+﻿@{
+    ViewData["Title"] = "API Monitoring Dashboard";
+    var logs = ViewBag.Logs as List<LogViewModel> ?? new List<LogViewModel>();
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"]</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        body { background: #f8f9fa; }
+        .header-bg { background: linear-gradient(135deg, #6b48ff, #9d7aff); color: white; }
+        .card-shadow { box-shadow: 0 4px 15px rgba(0,0,0,0.1); border: none; }
+        .stat-card { border-radius: 15px; }
+        .tab-active { background-color: #6b48ff !important; color: white !important; }
+        .badge-api-202 { background-color: #28a745; }
+        .badge-api-400 { background-color: #dc3545; }
+        .badge-pending { background-color: #ffc107; color: #000; }
+        .badge-processed { background-color: #28a745; }
+        .badge-error { background-color: #dc3545; }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header-bg py-5 mb-4">
+        <div class="container">
+            <h1 class="display-5 fw-bold">
+                API Monitoring Dashboard
+            </h1>
+            <p class="lead opacity-90">Real-time monitoring of Customer and Item ingestion pipeline</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Top Summary Cards -->
+        <div class="row g-4 mb-5">
+            <div class="col-md-3">
+                <div class="card stat-card card-shadow bg-light">
+                    <div class="card-body text-center">
+                        <h5 class="text-muted">TOTAL REQUESTS</h5>
+                        <h2 class="fw-bold text-primary">@ViewBag.TotalRequests</h2>
+                        <small class="text-muted">Combined domains</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stat-card card-shadow bg-light">
+                    <div class="card-body text-center">
+                        <h5 class="text-muted">API SUCCESS RATE</h5>
+                        <h2 class="fw-bold text-success">@ViewBag.ApiSuccessRate%</h2>
+                        <small class="text-muted">202 Accepted responses</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stat-card card-shadow bg-light">
+                    <div class="card-body text-center">
+                        <h5 class="text-muted">PROCESSING RATE</h5>
+                        <h2 class="fw-bold text-success">@ViewBag.ProcessingSuccessRate%</h2>
+                        <small class="text-muted">Successfully processed</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stat-card card-shadow bg-light">
+                    <div class="card-body text-center">
+                        <h5 class="text-muted">PENDING JOBS</h5>
+                        <h2 class="fw-bold text-warning">@ViewBag.Pending</h2>
+                        <small class="text-muted">Awaiting processing</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Domain Cards -->
+        <div class="row g-4 mb-5">
+            <div class="col-md-6">
+                <div class="card card-shadow">
+                    <div class="card-header bg-gradient text-white" style="background: #6b48ff;">
+                        <strong>Customer Domain</strong>
+                    </div>
+                    <div class="card-body">
+                        <div class="row text-center">
+                            <div class="col-6"><strong>Total Requests</strong><h4>@ViewBag.CustomerTotal</h4></div>
+                            <div class="col-6"><strong>API Success Rate</strong><h4 class="text-success">@ViewBag.CustomerSuccessRate%</h4></div>
+                            <div class="col-6"><strong>Processing Rate</strong><h4 class="text-success">@ViewBag.CustomerProcessingRate%</h4></div>
+                            <div class="col-6"><strong>Pending</strong><h4 class="text-warning">@ViewBag.CustomerPending</h4></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card card-shadow">
+                    <div class="card-header bg-gradient text-white" style="background: #8b5cf6;">
+                        <strong>Item Domain</strong>
+                    </div>
+                    <div class="card-body">
+                        <div class="row text-center">
+                            <div class="col-6"><strong>Total Requests</strong><h4>@ViewBag.ItemTotal</h4></div>
+                            <div class="col-6"><strong>API Success Rate</strong><h4 class="text-success">@ViewBag.ItemSuccessRate%</h4></div>
+                            <div class="col-6"><strong>Processing Rate</strong><h4 class="text-success">@ViewBag.ItemProcessingRate%</h4></div>
+                            <div class="col-6"><strong>Pending</strong><h4 class="text-warning">@ViewBag.ItemPending</h4></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Status Bars -->
+        <div class="row g-3 mb-5">
+            <div class="col"><div class="card text-center py-3 bg-success text-white"><strong>API SUCCESS (202)<br><h3>@ViewBag.Success202</h3></strong></div></div>
+            <div class="col"><div class="card text-center py-3 bg-danger text-white"><strong>API FAILURE (400)<br><h3>@ViewBag.Failure400</h3></strong></div></div>
+            <div class="col"><div class="card text-center py-3 bg-warning text-dark"><strong>PENDING PROCESSING<br><h3>@ViewBag.Pending</h3></strong></div></div>
+            <div class="col"><div class="card text-center py-3 bg-success text-white"><strong>PROCESSED<br><h3>@ViewBag.Processed</h3></strong></div></div>
+            <div class="col"><div class="card text-center py-3 bg-danger text-white"><strong>PROCESSING ERRORS<br><h3>@ViewBag.Errors</h3></strong></div></div>
+        </div>
+
+        <!-- Tabs + Table -->
+        <div class="card card-shadow">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <div>
+                    <strong>Request Logs</strong>
+                    <div class="btn-group ms-3" role="group">
+                        <a href="/Home?domain=all" class="btn btn-sm @(ViewBag.Domain == "all" ? "btn-primary tab-active" : "btn-outline-primary")">All</a>
+                        <a href="/Home?domain=customer" class="btn btn-sm @(ViewBag.Domain == "customer" ? "btn-primary tab-active" : "btn-outline-primary")">Customer</a>
+                        <a href="/Home?domain=item" class="btn btn-sm @(ViewBag.Domain == "item" ? "btn-primary tab-active" : "btn-outline-primary")">Item</a>
+                    </div>
+                </div>
+                <div>
+                    <input type="checkbox" class="form-check-input me-2" id="autoRefresh" checked onchange="toggleAutoRefresh()">
+                    <label class="form-check-label me-3" for="autoRefresh">Auto-refresh (10s)</label>
+                    <button class="btn btn-success btn-sm" onclick="location.reload()">Refresh Now</button>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0 align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Reference ID</th>
+                                <th>Domain</th>
+                                <th>Received Time</th>
+                                <th>API Status</th>
+                                <th>Processing Status</th>
+                                <th>Validation Errors</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var log in logs)
+                            {
+                                <tr>
+                                    <td><code class="small">@log.ReferenceId.Substring(0, 16)...</code></td>
+                                    <td>
+                                        <span class="badge bg-info">@log.Domain</span>
+                                    </td>
+                                    <td>@log.ReceivedTime:dd/MM/yyyy<br>@log.ReceivedTime:HH:mm:ss</td>
+                                    <td>
+                                        <span class="badge @(log.ApiStatus == 202 ? "badge-api-202" : "badge-api-400")">
+                                            @log.ApiStatus
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="badge @(log.ProcessingStatus == "PROCESSED" ? "badge-processed" : 
+                                                             log.ProcessingStatus == "PENDING" ? "badge-pending" : "badge-error")">
+                                            @log.ProcessingStatus
+                                        </span>
+                                    </td>
+                                    <td>
+                                        @if (!string.IsNullOrEmpty(log.ValidationErrors))
+                                        {
+                                            <i class="bi bi-exclamation-triangle-fill text-danger" title="@log.ValidationErrors"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="bi bi-check-circle-fill text-success"></i>
+                                        }
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#jsonModal"
+                                                onclick="showJson(@Html.Raw(Json.Serialize(log.RawPayload)))">
+                                            View JSON
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JSON Modal -->
+    <div class="modal fade" id="jsonModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Raw Request Payload</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <pre id="jsonContent" class="bg-dark text-white p-4 rounded" style="max-height: 70vh; overflow: auto;"></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function showJson(obj) {
+            document.getElementById("jsonContent").textContent = JSON.stringify(obj, null, 2);
+        }
+
+        let autoRefresh = true;
+        function toggleAutoRefresh() {
+            autoRefresh = document.getElementById("autoRefresh").checked;
+        }
+
+        setInterval(() => {
+            if (autoRefresh && document.visibilityState === "visible") {
+                location.reload();
+            }
+        }, 10000);
+    </script>
+</body>
+</html>
