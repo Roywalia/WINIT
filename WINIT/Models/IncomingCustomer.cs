@@ -10,7 +10,6 @@ public record IncomingCustomer
     string cityName,
     string regionCode,
     string regionName,
-    string customertype,
     bool isActive,
     bool isBlocked,
     decimal creditLimit,

@@ -51,6 +51,8 @@ builder.Services.AddAuthentication(x =>
     };
 });
 
+builder.Services.AddAuthorization();
+
 builder.Services.AddHangfire(config =>
     config.SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
     .UseSimpleAssemblyNameTypeSerializer()
